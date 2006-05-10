@@ -1,0 +1,4 @@
+EXIF extractor from http://www.drewnoakes.com/code/exif/.
+
+Author says: "This metadata library is available with Java source code for
+usage in the public domain."

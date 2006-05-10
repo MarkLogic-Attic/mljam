@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+  <servlet>
+    <servlet-name>Servlet</servlet-name>
+    <servlet-class>com.xqdev.jam.MLJAM</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Servlet</servlet-name>
+    <url-pattern>/mljam/*</url-pattern>
+  </servlet-mapping>
+
+  <!--
+   The section below here can be commented in for username/password access.
+   To enable this you'll need to configure the server with authentication too!
+   Make sure you're using MarkLogic Server 3.0-7 or newer.
+  -->
+  <!--
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>MLJAMProtection</web-resource-name>
+      <url-pattern>/mljam/*</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>mljam</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>public</realm-name>
+  </login-config>
+
+  <security-role>
+    <role-name>mljam</role-name>
+  </security-role>
+  -->
+</web-app>
