@@ -35,12 +35,13 @@ import org.apache.commons.codec.binary.*;
 import org.apache.commons.codec.DecoderException;
 
 /**
- * TODO: Synchronize to permit heavy use from different clients
  * TODO: Decide if we want to alter the jam:start() behavior so
  *       it connects to the server as a test.  This has the benefit
  *       that any server restart will HUP a client halfway through
  *       something because the context will disappear rather than be
  *       implicitly recreated to an empty state.
+ * TODO: Consider adding a feature so jam:start() can provide a
+ *       user-specified stale-out duration for the context.
  */
 public class MLJAM extends HttpServlet {
 
@@ -64,10 +65,17 @@ public class MLJAM extends HttpServlet {
 
   private static Interpreter getInterpreter(String contextId) throws EvalError {
     // Get the appropriate interpreter
-    Interpreter i = interpreters.get(contextId);
-    if (i == null) {
-      i = new Interpreter();
-      interpreters.put(contextId, i);
+    Interpreter i = null;
+    boolean createdInterp = false;
+    synchronized (interpreters) {  // serialize two gets of the same name
+      i = interpreters.get(contextId);
+      if (i == null) {
+        i = new Interpreter();
+        interpreters.put(contextId, i);
+        createdInterp = true;
+      }
+    }
+    if (createdInterp) {
       Log.log("Created context: " + contextId + " (" + i + ")");
 
       // Now configure stdin and stdout to capture 10k of content
@@ -171,6 +179,9 @@ public class MLJAM extends HttpServlet {
       // A good request looks like /mljam/contextid/verb?name=varname
       // The extra path info includes the context id and verb
       String extra = req.getPathInfo();       // "/contextid/verb"
+      if (extra == null || extra.equals("")) {
+        throw new ClientProblemException("Request requires a context id and verb in its extra path info");
+      }
       String[] parts = extra.split("/");      // { "", "contextid", "verb" }
       if (parts.length < 2) {
         throw new ClientProblemException("Request requires a context id and verb in its extra path info");
