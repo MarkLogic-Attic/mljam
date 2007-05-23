@@ -22,7 +22,7 @@
 <project name="mljam" default="all" basedir=".">
 
 	<property name="product.name" value="mljam"/>
-	<property name="release.version" value="1.1"/>
+	<property name="release.version" value="1.2"/>
 
 	<!-- Static definitions of where things are relative to the root -->
 	<property name="java.source" value="server/src"/>
@@ -174,6 +174,8 @@
 				<include name="server/**"/>
         <include name="utils/**"/>
         <include name="test/**"/>
+        <exclude name="server/exploded/**"/>
+        <exclude name="test/jmb**"/>
       </fileset>
 		</zip>
 	</target>
