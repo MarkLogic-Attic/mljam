@@ -3,8 +3,8 @@
  :
  : For a tutorial please see
  : http://xqzone.marklogic.com/howto/tutorials/2006-05-mljam.xqy.
-
- : Copyright 2006 Jason Hunter and Ryan Grimm
+ :
+ : Copyright 2006-2007 Jason Hunter and Ryan Grimm
  :
  : Licensed under the Apache License, Version 2.0 (the "License");
  : you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  : limitations under the License.
  :
  : @author Jason Hunter and Ryan Grimm
- : @version 1.0
+ : @version 1.2
  :)
 
 module "http://xqdev.com/jam"
@@ -100,6 +100,12 @@ define function jam:_is-all-whitespace(
  : If the XQuery $value holds a value mapped to String or byte[] it's sent
  : on the wire in an optimized fashion (not possible when in an array).
  :
+ : Note that in XQuery there's no difference between an item and a sequence
+ : of length one containing that item.  If you want to assign an XQuery
+ : sequence to a Java array and it might be a single item in XQuery, use
+ : jam:set-array() or jam:set-array-in().  These pass the value as an array
+ : even if the sequence happens to be of length one.
+ :
  : @param $var Name of variable to set, must be a legal Java token
  : @param $value Value to assign for the variable
  : @param $context Named context in which to do the assignment, or the
@@ -141,6 +147,40 @@ define function jam:set-in(
     jam:_call("post", $context, "eval", (), 
       concat('unset("', $var, '"); ', $var, ' = ', jam:_get-java($value), ';')
     )
+}
+
+(:~
+ : Special form of jam:set-in() that passes the value as a Java array even
+ : if it's a sequence of length one.  Java will see the variable as an Object[].
+ :
+ : @param $var Name of variable to set, must be a legal Java token
+ : @param $value Value to assign for the variable
+ : @param $context Named context in which to do the assignment, or the
+ :   default context if not specified
+ :)
+define function jam:set-array-in(
+  $var as xs:string,
+  $value as item()*,
+  $context as xs:string
+) as empty()
+{
+  (: Treat $value as an array regardless of its actual length. :)
+  jam:_call("post", $context, "eval", (), 
+    concat('unset("', $var, '"); ', $var, ' = ', jam:_get-java-array($value), ';')
+  )
+}
+
+(:
+ : Private utility function to support set-array(), by mapping XQuery data types
+ : to a Java array expression.
+ :)
+define function jam:_get-java-array(
+  $value as item()*
+) as xs:string
+{
+  concat('new Object[] { ',  (: Might want to choose more specific type :)
+    string-join(for $i in $value return jam:_get-java($i), ', ')
+  , ' }')
 }
 
 (:
@@ -615,6 +655,14 @@ define function jam:set(
 ) as empty()
 {
   jam:set-in($var, $value, jam:_get-default-context())
+}
+
+define function jam:set-array(
+  $var as xs:string,
+  $value as item()*
+) as empty()
+{
+  jam:set-array-in($var, $value, jam:_get-default-context())
 }
 
 define function jam:eval(
