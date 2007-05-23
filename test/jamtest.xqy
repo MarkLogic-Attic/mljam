@@ -49,7 +49,7 @@ return jam:get("dec1") = xs:decimal("1") and
 let $set := jam:set("dbl1", xs:double("1"))
 let $set := jam:set("dbl2", xs:double("INF"))
 let $set := jam:set("dbl3", xs:double("-INF"))
-let $set := jam:set("dbl4", xs:double(number()))
+let $set := jam:set("dbl4", xs:double(number(())))
 return jam:get("dbl1") = xs:double("1") and
        jam:get("dbl2") = xs:double("INF") and
        jam:get("dbl3") = xs:double("-INF") and
@@ -59,7 +59,7 @@ return jam:get("dbl1") = xs:double("1") and
 let $set := jam:set("flt1", xs:float("1"))
 let $set := jam:set("flt2", xs:float("INF"))
 let $set := jam:set("flt3", xs:float("-INF"))
-let $set := jam:set("flt4", xs:float(number()))
+let $set := jam:set("flt4", xs:float(number(())))
 return jam:get("flt1") = xs:float("1") and
        jam:get("flt2") = xs:float("INF") and
        jam:get("flt3") = xs:float("-INF") and
@@ -86,8 +86,8 @@ let $set := jam:set("i", xs:int(5))
 return xdmp:describe(jam:get("i")) = xdmp:describe(xs:int(5))
 ,
 
-let $set := jam:set("i", xs:integer(1e90))
-return xdmp:describe(jam:get("i")) = xdmp:describe(xs:integer(1e90))
+let $set := jam:set("i", xs:integer(1e19))
+return xdmp:describe(jam:get("i")) = xdmp:describe(xs:integer(1e19))
 ,
 
 let $set := jam:set("q", xs:QName("fn:hi"))
@@ -107,17 +107,17 @@ return jam:get("newline") = "
 " and jam:get("newline") instance of xs:string
 ,
 
-let $set := jam:set("gday", xs:gDay("01"))
+let $set := jam:set("gday", xs:gDay("---01"))
 (: let $set := jam:set("gmonth", xs:gMonth("01")) :)
 let $set := jam:set("gyear", xs:gYear("2001"))
 let $set := jam:set("gyearmonth", xs:gYearMonth("2006-04"))
-let $set := jam:set("gmonthday", xs:gMonthDay("01-02"))
+let $set := jam:set("gmonthday", xs:gMonthDay("--01-02"))
 return
-  xdmp:describe(jam:get("gday")) = xdmp:describe(xs:gDay("01")) and
+  xdmp:describe(jam:get("gday")) = xdmp:describe(xs:gDay("---01")) and
   (: xdmp:describe(jam:get("gmonth")) = xdmp:describe(xs:gMonth("01")) and :)
   xdmp:describe(jam:get("gyear")) = xdmp:describe(xs:gYear("2001")) and
   xdmp:describe(jam:get("gyearmonth")) = xdmp:describe(xs:gYearMonth("2006-04")) and
-  xdmp:describe(jam:get("gmonthday")) = xdmp:describe(xs:gMonthDay("01-02"))
+  xdmp:describe(jam:get("gmonthday")) = xdmp:describe(xs:gMonthDay("--01-02"))
 ,
 
 (: xdt:untypedAtomic -> String -> xs:string :)
@@ -217,7 +217,7 @@ return deep-equal(jam:get("a"), $arr)
 (: A heterogenous array :)
 let $arr := ("abc", 1, 1.0,
              current-dateTime(), current-date(), current-time(),
-             xs:gDay("01"), xs:QName("fn:hi"),
+             xs:gDay("---01"), xs:QName("fn:hi"),
              xs:float("INF"), xs:double("0"), xs:double(-0.0))
 let $set := jam:set("a", $arr)
 return deep-equal(jam:get("a"), $arr)
@@ -310,10 +310,12 @@ let $bigstring := concat("abcd", string-pad("x", 10236), "e")
 let $set := jam:set("big", $bigstring)
 let $setup := jam:eval('print(big);')
 let $result := jam:get-stdout()
-return 
-  (ends-with($result, "xxxe&#xA;") or ends-with($result, "xxxe&#xD;&#xA;")) and
-  starts-with($result, "dxxx") and
-  string-length($result) = 10240
+return
+  string-length($result) = 10240 and
+  (
+   (ends-with($result, "xxxe&#xA;") and starts-with($result, "cdxx")) or
+   (ends-with($result, "xxxe&#xD;&#xA;") and starts-with($result, "dxxx"))
+  )
 ,
 
 (: Simple JDOM element fetch :)
@@ -371,6 +373,11 @@ deep-equal(
 let $bytes := jam:eval-get('x = "1"; y = new byte[] { 65, 66 };')
 return $bytes instance of binary() and
        xdmp:quote($bytes) = "AB"
+,
+let $assign := jam:set-array('x', 'single')
+let $assign := jam:set-array('y', ('single','double'))
+return
+jam:eval-get('x.length') = 1 and jam:eval-get('y.length') = 2
 ,
 
 jam:end()
