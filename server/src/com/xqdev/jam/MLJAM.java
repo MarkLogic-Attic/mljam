@@ -484,7 +484,7 @@ public class MLJAM extends HttpServlet {
         writer.write("'-INF'");
       }
       else if (flt.equals(Float.NaN)) {
-        writer.write("fn:number()");  // poor man's way to write NaN
+        writer.write("fn:number(())");  // poor man's way to write NaN
       }
       else {
         writer.write(o.toString());
@@ -501,7 +501,7 @@ public class MLJAM extends HttpServlet {
         writer.write("'-INF'");
       }
       else if (dbl.equals(Double.NaN)) {
-        writer.write("fn:number()");  // poor man's way to write NaN
+        writer.write("fn:number(())");  // poor man's way to write NaN
       }
       else {
         writer.write(o.toString());
