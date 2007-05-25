@@ -581,6 +581,7 @@ define function jam:_call(
       <options xmlns="xdmp:http">
         { $authentication }
         <timeout>30</timeout> 
+        <headers><content-type>text/plain; charset=UTF-8</content-type></headers>
         <data>{$body}</data>
       </options>
 
