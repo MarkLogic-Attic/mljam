@@ -5,7 +5,6 @@ xdmp:set-response-content-type("text/plain"),
 
 jam:start("http://localhost:8080/mljam/mljam", "admin", "secret")
 ,
-
 let $var := xs:anyURI("http://foo.com/bar?x=y")
 let $set := jam:set("var", $var)
 let $get := jam:get("var")
@@ -31,13 +30,13 @@ let $get := jam:get("var")
 return $var = $get
 ,
 
-let $var := "&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;"  (: hello world :)
+let $var := "jason&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;jason"  (: hello world :)
 let $set := jam:set("var", $var)
 let $get := jam:get("var")
-return ($var = $get, $var, $get)
+return $var = $get
 ,
 
-let $var := ("&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;", "&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;")
+let $var := ("jason&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;jason", "jason&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;jason")
 let $set := jam:set("var", $var)
 let $get := jam:get("var")
 return deep-equal($var, $get)
