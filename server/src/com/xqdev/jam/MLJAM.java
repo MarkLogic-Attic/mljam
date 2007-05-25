@@ -396,7 +396,7 @@ public class MLJAM extends HttpServlet {
     if (s != null && s.length() > 4096) {  // Cap super long errors
       s = s.substring(0, 2048) + " ...[trimmed]... " + s.substring(s.length() - 2048);
     }
-    res.setContentType("x-marklogic/xquery");
+    res.setContentType("x-marklogic/xquery; charset=UTF-8");
     Writer writer = res.getWriter();
     writer.write("error('" + escapeSingleQuotes(s) + "')");
     writer.flush();
@@ -405,7 +405,7 @@ public class MLJAM extends HttpServlet {
   private static void sendServerProblemResponse(HttpServletResponse res, String s) throws IOException {
     // Commenting out the status code because we want the client to eval the error() call
     //res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    res.setContentType("x-marklogic/xquery");
+    res.setContentType("x-marklogic/xquery; charset=UTF-8");
     if (s != null && s.length() > 4096) {  // Cap super long errors
       s = s.substring(0, 2048) + " ...[trimmed]... " + s.substring(s.length() - 2048);
     }
@@ -435,7 +435,7 @@ public class MLJAM extends HttpServlet {
   private static void sendXQueryResponse(HttpServletResponse res, Object o) throws IOException {
     // Make sure to leave the status code alone.  It defaults to 200, but sometimes
     // callers of this method will have set it to a custom code.
-    res.setContentType("x-marklogic/xquery");
+    res.setContentType("x-marklogic/xquery; charset=UTF-8");
     //res.setContentType("text/plain");
     Writer writer = res.getWriter();  // care to handle errors later?
 
