@@ -3,7 +3,7 @@ import module namespace jam="http://xqdev.com/jam" at "jam.xqy"
 xdmp:set-response-content-type("text/plain"),
 
 
-jam:start("http://localhost:8080/mljam", "admin", "secret")
+jam:start("http://localhost:8080/mljam/mljam", "admin", "secret")
 ,
 
 let $var := xs:anyURI("http://foo.com/bar?x=y")
@@ -23,6 +23,24 @@ let $var := xs:base64Binary(xdmp:base64-encode($s))
 let $set := jam:set("var", $var)
 let $get := jam:get("var")
 return $s = xdmp:quote($get)
+,
+
+let $var := "English"
+let $set := jam:set("var", $var)
+let $get := jam:get("var")
+return $var = $get
+,
+
+let $var := "&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;"  (: hello world :)
+let $set := jam:set("var", $var)
+let $get := jam:get("var")
+return ($var = $get, $var, $get)
+,
+
+let $var := ("&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;", "&#x4eca;&#x65e5;&#x306f;&#x4e16;&#x754c;")
+let $set := jam:set("var", $var)
+let $get := jam:get("var")
+return deep-equal($var, $get)
 ,
 
 let $set := jam:set("var1", true())
@@ -273,8 +291,8 @@ return contains($val, "roar")
 :)
 
 (: Make sure diff contexts work properly :)
-let $start := jam:start-in("http://localhost:8080/mljam", "admin", "secret", "one")
-let $start := jam:start-in("http://localhost:8080/mljam", "admin", "secret", "two")
+let $start := jam:start-in("http://localhost:8080/mljam/mljam", "admin", "secret", "one")
+let $start := jam:start-in("http://localhost:8080/mljam/mljam", "admin", "secret", "two")
 let $set := jam:set-in("x", 100, "one")
 let $set := jam:set-in("x", 200, "two")
 let $eval := jam:eval-in("y = x*2;", "one")
