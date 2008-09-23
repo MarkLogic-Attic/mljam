@@ -46,9 +46,3 @@ Installation
 
 The tutorial above explains the basic steps of an install.
 
-
-History
--------
-
-The latest 1.3 release includes a bug fix when manipulating non-ASCII characters.
-

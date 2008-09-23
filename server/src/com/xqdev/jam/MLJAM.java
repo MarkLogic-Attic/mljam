@@ -145,9 +145,17 @@ public class MLJAM extends HttpServlet {
 
   private static String getBody(HttpServletRequest req) {
     try {
-      // Trust that no one called getReader() on this request already
-      // Also trust MarkLogic to always send as UTF-8 (see #6308)
-      Reader reader = new BufferedReader(new InputStreamReader(req.getInputStream(), "UTF-8"));
+      // Try reading the post body using characters.
+      // This might throw an exception if something on the
+      // server side already called getInputStream().
+      // In that case we'll pull as bytes.
+      Reader reader = null;
+      try {
+        reader = new BufferedReader(req.getReader());
+      }
+      catch (IOException e) {
+        reader = new BufferedReader(new InputStreamReader(req.getInputStream(), "UTF-8"));
+      }
 
       StringBuffer sbuf = new StringBuffer();
       char[] cbuf = new char[4096];
@@ -157,8 +165,8 @@ public class MLJAM extends HttpServlet {
       }
       return sbuf.toString();
     }
-    catch (IOException e) {
-      throw new ServerProblemException("IOException in reading POST body: " + e.getMessage());
+    catch (IOException e2) {
+      throw new ServerProblemException("IOException in reading POST body: " + e2.getMessage());
     }
   }
 
