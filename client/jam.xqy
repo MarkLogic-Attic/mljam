@@ -628,9 +628,9 @@ define function jam:_escape-string(
 ) as xs:string
 {
   (: These replaces funny because arg2 is a regexp and arg3 is a literal :)
-  let $s := replace($s, '\\', '\\') (: \ replaced with \\ :)
-  let $s := replace($s, '"', '\"')  (: " replaced with \" :)
-  let $s := replace($s, '&#xA;', '\n')
+  let $s := replace($s, '\\', '\\\\') (: \ replaced with \\ :)
+  let $s := replace($s, '"', '\\"')  (: " replaced with \" :)
+  let $s := replace($s, '&#xA;', '\\n')
   return $s
 }
 
