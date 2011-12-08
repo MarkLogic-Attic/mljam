@@ -14,7 +14,7 @@ coding.  Example uses for MLJAM:
 * Re-encoding content as UTF-8
 
 The MLJAM Tutorial has more information:
-http://xqzone.marklogic.com/howto/tutorials/2006-05-mljam.xqy
+http://developer.marklogic.com/howto/tutorials/2006-05-mljam.xqy
 
 
 Source Components
