@@ -593,13 +593,13 @@ public class MLJAM extends HttpServlet {
       org.jdom.Element elt = (org.jdom.Element) o;
       writer.write("xdmp:unquote('");
       // Because "&lt;" in XQuery is the same as "<" I need to double escape any ampersands
-      writer.write(new org.jdom.output.XMLOutputter().outputString(elt).replaceAll("&", "&amp;"));
+      writer.write(new org.jdom.output.XMLOutputter().outputString(elt).replaceAll("&", "&amp;").replaceAll("'", "''"));
       writer.write("')/*");  // make sure to return the root elt
     }
     else if (o instanceof org.jdom.Document) {
       org.jdom.Document doc = (org.jdom.Document) o;
       writer.write("xdmp:unquote('");
-      writer.write(new org.jdom.output.XMLOutputter().outputString(doc).replaceAll("&", "&amp;"));
+      writer.write(new org.jdom.output.XMLOutputter().outputString(doc).replaceAll("&", "&amp;").replaceAll("'", "''"));
       writer.write("')");
     }
     else if (o instanceof org.jdom.Text) {
